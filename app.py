@@ -8,6 +8,11 @@ app.config['SECRET_KEY'] = 'secret!'
 socket = SocketIO(app)
 
 
+@app.route("/")
+def index():
+    return "Domovoy Homepage"
+
+
 @socket.on("device_report", namespace='/house_device')
 def getDeviceStats(data):
     machine_id = data['machine_id']
