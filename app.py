@@ -1,42 +1,16 @@
 from flask import Flask
-from flask_socketio import SocketIO, emit
-from utils import prob_failure, load_model
-from flask import jsonify
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socket = SocketIO(app)
 
+from routes import *
 
-@app.route("/")
-def index():
-    return "Domovoy Homepage"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://yash:Hisar*123@localhost/device'
 
-
-@socket.on("device_report", namespace='/house_device')
-def getDeviceStats(data):
-    machine_id = data['machine_id']
-    machine_inputs = data['machine_inputs']
-    model = load_model()
-    failure_prob = prob_failure(model, machine_inputs)
-    if failure_prob >= 0.15:
-        # TODO complete this method
-        emit('device_results', jsonify(
-            {
-                "machine_id" : machine_id,
-                "result" : "Expected to fail",
-                "prob" : str(failure_prob)
-            }
-        ))
-    else:
-        emit('device_results', jsonify(
-            {
-                "machine_id": machine_id,
-                "result": "Device working properly",
-                "prob": str(failure_prob)
-            }
-        ))
-
+# from models import db
+# db.create_all()
 
 if __name__ == '__main__':
     socket.run(app)
