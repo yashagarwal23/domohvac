@@ -5,12 +5,6 @@ from models import db, device
 import numpy
 
 
-@app.route('create_db')
-def create_db():
-    from models import db
-    db.create_all()
-
-
 @app.route("/")
 def index():
     return "Domovoy Homepage"
